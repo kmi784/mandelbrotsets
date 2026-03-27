@@ -1,0 +1,15 @@
+.venv/
+.vscode/
+
+bin/*
+!bin/.gitkeep
+
+data/*
+!data/.gitkeep
+
+images/*
+!images/.gitkeep
+
+src/debug
+src/*.txt
+src/*.c.swp
