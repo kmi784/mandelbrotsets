@@ -1,14 +1,9 @@
 .venv/
 .vscode/
 
-bin/*
-!bin/.gitkeep
-
-build/*
-!build/.gitkeep
-
-lib/*
-!lib/.gitkeep
+bin/
+build/
+lib/
 
 python/__pycache__/*
 python/mandelbrot/__pycache__/*

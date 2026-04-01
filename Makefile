@@ -1,34 +1,49 @@
-SRC := main.c 
-D_TRGT := debug 
-BINARIES := ../bin
+CC := gcc
 
-CXX := gcc
-D_FLAGS := -Wall -Wpedantic -Wsign-conversion -O0 -g -pthread
-R_FLAGS := -O3 -pthread
+# compiler flags
+CFLAGS := -Wall -Wextra -Wpedantic -Wsign-conversion -g -O0 -pthread 
 
-SCALES := small medium large
-ITERATIONS := 5000
-OUTPUT := data
+# preprocessor flags (also -DMY_MACRO=...)
+CPPFLAGS := -Iinclude
 
-THREADS := 1 2 4 6 8
+# linker flags
+LDFLAGS := -pthread
 
-all: $(D_TRGT)
+# libraries
+LDLIBS := -lmandelbrot
 
-$(D_TRGT): $(SRC)
-	$(CXX) $(D_FLAGS) $(SRC) -o $(D_TRGT)
-	@echo "Running debug build..."
-	time ./$(D_TRGT)
 
-threads:
-	@for T in $(THREADS); do \
-		$(CXX) $(R_FLAGS) -DSCALE=\"large\" -DNUMBER_ITERATIONS=$(ITERATIONS) -DNUMBER_THREADS=$$T main.c -o $(BINARIES)/test_threads_cores$$T; \
-	done
+.PHONY: run clean
 
-release:
-	@for S in $(SCALES); do\
-		DEFS="-DSCALE=\"$$S\" -DNUMBER_ITERATIONS=$(ITERATIONS) -DOUTPUT_DIRECTORY=\"$(OUTPUT)\""; \
-		$(CXX) $(R_FLAGS) $$DEFS $(SRC) -o $(BINARIES)/$${S}; \
-	done
+run: bin/debug
+	@echo "RUN $<"
+	@LD_LIBRARY_PATH=./lib time ./bin/debug
 
-clean: 
-	@rm -f debug ../data/array_debug.txt .main.c.swp
+bin/debug: bin/ lib/libmandelbrot.so build/debug.o
+	@echo "LD $@"
+	@$(CC) build/debug.o -Llib $(LDFLAGS) $(LDLIBS) -o bin/debug
+
+bin/:
+	@mkdir -p bin
+
+lib/libmandelbrot.so: lib/ build/mandelbrot.o
+	@echo "LD $@"
+	@$(CC) -shared build/mandelbrot.o $(LDFLAGS) -o lib/libmandelbrot.so
+
+lib/:
+	@mkdir -p lib 
+
+build/mandelbrot.o: build/ src/mandelbrot.c include/mandelbrot.h
+	@echo "CC $@"
+	@$(CC) $(CFLAGS) $(CPPFLAGS) -fPIC -c src/mandelbrot.c -o build/mandelbrot.o
+
+build/debug.o: build/ src/debug.c include/mandelbrot.h
+	@echo "CC $@"
+	@$(CC) $(CFLAGS) $(CPPFLAGS) -c src/debug.c -o build/debug.o
+
+build/:
+	@mkdir -p build
+
+clean:
+	@rm -rf build lib bin
+
