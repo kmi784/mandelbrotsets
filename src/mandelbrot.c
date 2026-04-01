@@ -201,10 +201,9 @@ int compute_mandelbrot(
     return 0;
 }
 
-int save_grid(MandelbrotGrid* grid, const char* file_name) {
-    FILE* file = fopen(file_name, "w");
-    if(file == NULL) {
-        fprintf(stderr, "ERROR: Opening file %s failed.\n", file_name);
+int save_grid(MandelbrotGrid* grid, FILE* file) {
+   if(file == NULL) {
+        fprintf(stderr, "ERROR: Opening file failed.\n");
         return 1;
     }
 
@@ -215,7 +214,6 @@ int save_grid(MandelbrotGrid* grid, const char* file_name) {
         fprintf(file, "\n");
     }
 
-    fclose(file);
     return 0;
 }
 

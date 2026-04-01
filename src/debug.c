@@ -4,7 +4,7 @@
 int main() {
 
     MandelbrotGrid grid;
-    if(init_grid(&grid, GRID_MEDIUM, -3.5, -1.5, 1.5, 1.5)) {
+    if(init_grid(&grid, GRID_DEBUG, -3.5, -1.5, 1.5, 1.5)) {
         fprintf(stderr, "ERROR: Initiating MandelbrotGrid failed.\n");
         return 1;
     }
@@ -16,11 +16,18 @@ int main() {
         return 1;
     }
 
-    if(save_grid(&grid, "results/grids/medium.txt")) {
+    FILE* file = fopen("results/grids/debug.txt", "w");
+    if(file == NULL) {
+        fprintf(stderr, "ERROR: Opening file failed.\n");
+        return 1;
+    }
+
+    if(save_grid(&grid, file)) {
         fprintf(stderr, "ERROR: Saving MandelbrotGrid failed.\n");
         return 1;
     }
 
+    fclose(file);
 
     free_grid(&grid);    
 

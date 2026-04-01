@@ -1,7 +1,9 @@
 #ifndef MANDELBROT_H
 #define MANDELBROT_H
 
-
+/**
+ * Enumeration of all possible grid sizes.
+ */
 typedef enum {
     GRID_DEBUG,
     GRID_SMALL,
@@ -9,7 +11,9 @@ typedef enum {
     GRID_LARGE,
 } GridSize;
 
-
+/**
+ * Core-object storing the pixels of the grid and its domain in the complex plain.
+ */
 typedef struct {
     unsigned int* pixels;
     unsigned int height;
@@ -72,11 +76,11 @@ int compute_mandelbrot(
  * saves grid to a file.
  * @param grid 
  *      pointer to `MandelbrotGrid` object
- * @param file_name
- *      directory of the output file
+ * @param file
+ *      pointer to `FILE` object
  * @return `0` on success, `1` on failure
  */
-int save_grid(MandelbrotGrid* grid, const char* file_name);
+int save_grid(MandelbrotGrid* grid, FILE* file);
 
 /**
  * frees `MandelbrotGrid`-object.
