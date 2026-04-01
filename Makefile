@@ -19,30 +19,30 @@ run: bin/debug
 	@echo "RUN $<"
 	@LD_LIBRARY_PATH=./lib time ./bin/debug
 
-bin/debug: bin/ lib/libmandelbrot.so build/debug.o
+bin/debug: lib/libmandelbrot.so build/debug.o
+	@mkdir -p bin
 	@echo "LD $@"
 	@$(CC) build/debug.o -Llib $(LDFLAGS) $(LDLIBS) -o bin/debug
+	
 
-bin/:
-	@mkdir -p bin
-
-lib/libmandelbrot.so: lib/ build/mandelbrot.o
+lib/libmandelbrot.so: build/mandelbrot.o
+	@mkdir -p lib 
 	@echo "LD $@"
 	@$(CC) -shared build/mandelbrot.o $(LDFLAGS) -o lib/libmandelbrot.so
 
-lib/:
-	@mkdir -p lib 
+	
 
-build/mandelbrot.o: build/ src/mandelbrot.c include/mandelbrot.h
+build/mandelbrot.o: src/mandelbrot.c include/mandelbrot.h
+	@mkdir -p build
 	@echo "CC $@"
 	@$(CC) $(CFLAGS) $(CPPFLAGS) -fPIC -c src/mandelbrot.c -o build/mandelbrot.o
 
-build/debug.o: build/ src/debug.c include/mandelbrot.h
+build/debug.o: src/debug.c include/mandelbrot.h
+	@mkdir -p build
 	@echo "CC $@"
 	@$(CC) $(CFLAGS) $(CPPFLAGS) -c src/debug.c -o build/debug.o
 
-build/:
-	@mkdir -p build
+	
 
 clean:
 	@rm -rf build lib bin

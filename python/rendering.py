@@ -6,8 +6,8 @@ key = "Sasuke"
 
 scale = (
     # "small"
-    # "medium"
-    "large"
+    "medium"
+    # "large"
 )
 
 
@@ -22,32 +22,25 @@ color_maps = {
 }
 
 
-with open(f"data/array_{scale}.txt", "r") as f:
-    header = f.readline()
-    height, width, max_iter = map(int, header.split())
+grid = loadtxt(f"results/grids/{scale}.txt")
+height, width = grid.shape
+
+print(f"Loading grid of shape {height}x{width} succeeded.")
+
+#new_height = int(10 / 16 * width)
+#crop = (height - new_height) // 2
+#grid = grid[crop : crop + new_height, :]
 
 
-print(f"Reading array of shape {height}x{width}...")
+mask_inside = grid == grid.max()
 
-image = loadtxt(f"data/array_{scale}.txt", skiprows=1)
-assert image.shape == (height, width)
-
-print(f"Reading succeeded.")
-
-new_height = int(10 / 16 * width)
-crop = (height - new_height) // 2
-image = image[crop : crop + new_height, :]
-
-
-mask_inside = image == max_iter
-
-image = log(1 + image)
-image[mask_inside] = 0
+grid = log(1 + grid)
+grid[mask_inside] = 0
 
 cmap = LinearSegmentedColormap.from_list("my_cmap", color_maps[key])
 
-#plt.imshow(image, cmap=cmap)
-#plt.colorbar()
-#plt.show()
+plt.imshow(grid, cmap=cmap)
+plt.colorbar()
+plt.show()
 
-plt.imsave(f"images/Mandelbrot Set {key}.png", image, cmap=cmap)
+#plt.imsave(f"results/figures/Mandelbrot Set {key}.png", grid, cmap=cmap)

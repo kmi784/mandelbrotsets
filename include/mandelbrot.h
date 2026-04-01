@@ -47,13 +47,6 @@ int init_grid(
 );
 
 /**
- * frees `MandelbrotGrid`-object.
- * @param grid 
- *      pointer to `MandelbrotGrid` object
- */
-void free_grid(MandelbrotGrid* grid);
-
-/**
  * shows stored metadata in `MandelbrotGrid`-object.
  * @param grid 
  *      pointer to `MandelbrotGrid` object
@@ -65,11 +58,31 @@ void debug_print_grid(const MandelbrotGrid* grid);
  * assigns pixels in grid with values.
  * @param grid 
  *      pointer to `MandelbrotGrid` object
- * @param iterations
+ * @param num_iterations
  *      maximal number of iteration per pixel
- * @param threads
+ * @param num_threads
  *      number of threads 
+ * @return `0` on success, `1` on failure
  */
-int compute_mandelbrot(MandelbrotGrid* grid, unsigned int iterations, unsigned int threads);
+int compute_mandelbrot(
+    MandelbrotGrid* grid, unsigned int num_iterations, unsigned int num_threads
+);
+
+/**
+ * saves grid to a file.
+ * @param grid 
+ *      pointer to `MandelbrotGrid` object
+ * @param file_name
+ *      directory of the output file
+ * @return `0` on success, `1` on failure
+ */
+int save_grid(MandelbrotGrid* grid, const char* file_name);
+
+/**
+ * frees `MandelbrotGrid`-object.
+ * @param grid 
+ *      pointer to `MandelbrotGrid` object
+ */
+void free_grid(MandelbrotGrid* grid);
 
 #endif
