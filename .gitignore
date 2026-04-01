@@ -4,11 +4,20 @@
 bin/*
 !bin/.gitkeep
 
-data/*
-!data/.gitkeep
+build/*
+!build/.gitkeep
 
-images/*
-!images/.gitkeep
+lib/*
+!lib/.gitkeep
+
+python/__pycache__/*
+python/mandelbrot/__pycache__/*
+
+results/figures/*
+!results/figures/.gitkeep
+results/grids/*
+!results/grids/.gitkeep
+
 
 src/debug
 src/*.txt
