@@ -11,60 +11,67 @@ CPPFLAGS := -Iinclude
 LDFLAGS := -pthread
 
 # libraries
-D_LDLIBS := -lmandelbrot_debug
-R_LDLIBS := -lmandelbrot
+LDLIBS := -lmandelbrot_debug
 
 
-.PHONY: run clean
+.PHONY: clean release run
+
+# $@ = Target of rule
+# $< = First dependency
+# $^ = all dependencies
 
 run: bin/debug
 	@echo "RUN $<"
-	@LD_LIBRARY_PATH=./lib time ./bin/debug
+	@LD_LIBRARY_PATH=./lib time ./$<
 
-bin/debug: lib/libmandelbrot_debug.so build/debug.o
+bin/debug: build/debug.o lib/libmandelbrot_debug.so 
 	@mkdir -p bin
 	@echo "LD $@"
-	@$(CC) build/debug.o -Llib $(LDFLAGS) $(D_LDLIBS) -o bin/debug
+	@$(CC) $< -Llib $(LDFLAGS) $(LDLIBS) -o $@
 	
-
 lib/libmandelbrot_debug.so: build/mandelbrot_debug.o
 	@mkdir -p lib 
 	@echo "LD $@"
-	@$(CC) -shared build/mandelbrot_debug.o $(LDFLAGS) -o lib/libmandelbrot_debug.so
+	@$(CC) -shared $< $(LDFLAGS) -o $@
 
 build/mandelbrot_debug.o: src/mandelbrot.c include/mandelbrot.h
 	@mkdir -p build
 	@echo "CC $@"
-	@$(CC) $(D_CFLAGS) $(CPPFLAGS) -fPIC -c src/mandelbrot.c -o build/mandelbrot_debug.o
+	@$(CC) $(D_CFLAGS) $(CPPFLAGS) -fPIC -c $< -o $@
 
 build/debug.o: src/debug.c include/mandelbrot.h
 	@mkdir -p build
 	@echo "CC $@"
-	@$(CC) $(D_CFLAGS) $(CPPFLAGS) -c src/debug.c -o build/debug.o
+	@$(CC) $(D_CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 
-release: bin/grid 
+release: bin/grid lib/libmandelbrot.so
 
-bin/grid: lib/libmandelbrot.so build/grid.o
+bin/grid: build/grid.o lib/libmandelbrot.a 
 	@mkdir -p bin
 	@echo "LD $@"
-	@$(CC) build/grid.o -Llib $(LDFLAGS) $(R_LDLIBS) -o bin/grid
+	@$(CC) $^ -Llib $(LDFLAGS) -o $@
 
 lib/libmandelbrot.so: build/mandelbrot.o 
 	@mkdir -p lib 
 	@echo "LD $@"
-	@$(CC) -shared build/mandelbrot.o $(LDFLAGS) -o lib/libmandelbrot.so
+	@$(CC) -shared $< $(LDFLAGS) -o $@
+
+lib/libmandelbrot.a: build/mandelbrot.o
+	@mkdir -p lib
+	@echo "AR $@"
+	@ar rcs $@ $<
 
 build/mandelbrot.o: src/mandelbrot.c include/mandelbrot.h
 	@mkdir -p build
 	@echo "CC $@"
-	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -fPIC -c src/mandelbrot.c -o build/mandelbrot.o
+	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -fPIC -c $< -o $@
 
 build/grid.o: src/main.c include/mandelbrot.h
 	@mkdir -p build
 	@echo "CC $@"
-	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -c src/main.c -o build/grid.o
+	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
-	@rm -rf bin/debug build lib/*_debug.so results/grids/debug.txt 
+	@rm -rf bin build lib results/grids/debug.txt 
 

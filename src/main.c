@@ -76,7 +76,7 @@ int main(int argc, char* argv[]){
                 "  --imag_max=<float>     upper boundary in complex plain (default: %f)\n"
                 "  --num_threads=<uint>   number of threads (default: %u)\n"
                 "  --num_iter=<uint>      maximal amount of iterations per pixel (default: %u)\n"  
-                "  --output_dir, -o       output directory (default: results/grids/[grid_size].txt)"
+                "  --output_dir, -o       output directory (default: results/grids/[grid_size].txt)\n"
                 "  --yes, -y              skip confirmation prompt (for scripts)\n"
                 "  --help, -h             help\n",
                 argv[0], grid_size, real_min, real_max, imag_min, imag_max, num_threads, num_iter
