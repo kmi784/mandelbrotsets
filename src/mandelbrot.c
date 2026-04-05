@@ -18,7 +18,7 @@ typedef struct {
 /**
  * adds two complex numbers `a` and `b`.
  */
-Complex _add(Complex a, Complex b){
+static Complex add(Complex a, Complex b){
     Complex tmp;
     tmp.real = a.real + b.real;
     tmp.imag = a.imag + b.imag;
@@ -28,7 +28,7 @@ Complex _add(Complex a, Complex b){
 /**
  * squares a complex number `a`.
  */
-Complex _square(Complex a){
+static Complex square(Complex a){
     Complex tmp;
     tmp.real = a.real*a.real - a.imag*a.imag;
     tmp.imag = 2*a.real*a.imag;
@@ -47,7 +47,7 @@ Complex _square(Complex a){
  * @return 
  *      corresponding complex number as `Complex` object
  */
-Complex _get_complex_number(MandelbrotGrid* grid, unsigned int row, unsigned int col) {
+static Complex get_complex_number(MandelbrotGrid* grid, unsigned int row, unsigned int col) {
     Complex tmp;
     tmp.real = (
         grid->real_min + (grid->real_max - grid->real_min) * col / (grid->width - 1)
@@ -76,17 +76,17 @@ typedef struct {
  *      pointer to `GridStrip` object  
  * @return `NULL`
  */
-void* _compute_strip(void* arg) {
+static void* compute_strip(void* arg) {
     MandelbrotGridStrip* strip = (MandelbrotGridStrip*) arg;
 
     for(unsigned int i = strip->row_start; i < strip->row_end; ++i) {
         for(unsigned int j = 0; j < strip->grid->width; ++j) {
             int bounded = 1;
             Complex z = {0.0, 0.0};
-            Complex c = _get_complex_number(strip->grid, i, j);
+            Complex c = get_complex_number(strip->grid, i, j);
 
             for(unsigned int k = 0; k < strip->iterations; ++k) {
-                z = _add(_square(z), c);
+                z = add(square(z), c);
 
                 if(z.real * z.real + z.imag * z.imag > 4) {
                     strip->grid->pixels[i * strip->grid->width + j] = k;
@@ -188,7 +188,7 @@ int compute_mandelbrot(
         strips[t].row_end = (t < num_threads - 1) ? (t + 1)*chunk : grid->height;
         strips[t].iterations = num_iterations;
         strips[t].grid = grid;
-        pthread_create(&threads[t], NULL, _compute_strip, &strips[t]);
+        pthread_create(&threads[t], NULL, compute_strip, &strips[t]);
     }
 
     for(unsigned int t = 0; t < num_threads; ++t) {
