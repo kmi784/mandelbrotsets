@@ -5,6 +5,31 @@
 >**Proposition** If there exists a $k\in\mathbb{N}_0$ such that $|z_k|>2$ holds, then $(z_n)_{n\in\mathbb{N}_0}\subset\mathbb{C}$ is unbounded.
 
 
+## Smooth Coloring
+
+> **Proposition (Asymptotic growth)** Let $(z_n)_{n\in\mathbb{N}_0}\subset\mathbb{C}$ with  $$z_{n+1} = z_n^2 + c.$$  If $|z_n|$ is sufficiently large, then  $$|z_{n+1}| \approx |z_n|^2.$$
+
+> **Lemma (Logarithmic growth)** For sufficiently large $n$ it holds approximately:$$\log |z_{n+1}| \approx 2 \log |z_n|.$$ Iterating this yields:$$\log |z_n| \approx 2^n \cdot \log |z_0|.$$
+
+> **Lemma (Double logarithm linearization)** Applying the logarithm again:$$\log(\log |z_n|) \approx n \cdot \log(2) + \log(\log |z_0|).$$
+
+> **Definition (Continuous escape index)** Let $k\in\mathbb{N}$ be the first index such that $|z_k|>2$. Then define the continuous escape value$$\mu := k + 1 - \frac{\log(\log |z_k|)}{\log(2)}.$$
+
+---
+
+### Interpretation  
+The value $\mu \in \mathbb{R}$ refines the discrete escape index $k$ by incorporating the magnitude of $z_k$.  
+
+In particular:
+- $k$ gives the coarse escape time,
+- the correction term
+  $$
+  - \frac{\log(\log |z_k|)}{\log(2)}
+  $$
+  provides a continuous interpolation between iterations.
+
+
+
 
 ~~~sh
 repo/
