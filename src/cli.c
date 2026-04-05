@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "../include/cli.h"
+#include "../include/export.h"
 
 void set_defaults(Configs* cfg) {
     cfg->real_min = -3.5;

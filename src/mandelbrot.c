@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 
@@ -195,22 +196,6 @@ int compute_mandelbrot(
 
     free(threads);
     free(strips);
-
-    return 0;
-}
-
-int save_grid(MandelbrotGrid* grid, FILE* file) {
-   if(file == NULL) {
-        fprintf(stderr, "ERROR: Opening file failed.\n");
-        return 1;
-    }
-
-    for(unsigned int i = 0; i < grid->height; ++i){
-        for(unsigned int j = 0; j < grid->width; ++j){
-            fprintf(file, "%u\t", grid->pixels[i * grid->width +  j]);
-        }
-        fprintf(file, "\n");
-    }
 
     return 0;
 }

@@ -1,7 +1,6 @@
 #ifndef MANDELBROT_H
 #define MANDELBROT_H
 
-#include <stdio.h>
 
 /**
  * Enumeration of all possible grid sizes.
@@ -73,16 +72,6 @@ void debug_print_grid(const MandelbrotGrid* grid);
 int compute_mandelbrot(
     MandelbrotGrid* grid, unsigned int num_iterations, unsigned int num_threads
 );
-
-/**
- * saves grid to a file.
- * @param grid 
- *      pointer to `MandelbrotGrid` object
- * @param file
- *      pointer to `FILE` object
- * @return `0` on success, `1` on failure
- */
-int save_grid(MandelbrotGrid* grid, FILE* file);
 
 /**
  * frees `MandelbrotGrid`-object.
