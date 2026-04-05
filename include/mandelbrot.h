@@ -1,6 +1,8 @@
 #ifndef MANDELBROT_H
 #define MANDELBROT_H
 
+#include <stdio.h>
+
 /**
  * Enumeration of all possible grid sizes.
  */

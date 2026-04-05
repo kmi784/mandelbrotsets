@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
-#include <unistd.h>
 #include <string.h>
 
 #include "../include/cli.h"
@@ -248,14 +247,19 @@ int run_program(const Configs* cfg) {
             &grid, cfg->size, cfg->real_min, cfg->imag_min, cfg->real_max, cfg->imag_max
         )
     ) {
+        fclose(file);
         fprintf(stderr, "ERROR: Initiating MandelbrotGrid failed.\n");
         return 1;
     }
     if(compute_mandelbrot(&grid, cfg->num_iter, cfg->num_threads)) {
+        fclose(file);
+        free_grid(&grid);
         fprintf(stderr, "ERROR: Computing MandelbrotGrid failed.\n");
         return 1;
     }
     if(save_grid(&grid, file)) {
+        fclose(file);
+        free_grid(&grid);
         fprintf(stderr, "ERROR: Saving MandelbrotGrid failed.\n");
         return 1;
     }

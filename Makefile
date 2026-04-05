@@ -66,7 +66,7 @@ build/debug.o: src/debug.c include/mandelbrot.h include/cli.h
 ##### RELEASE ##########################################################################
 release: bin/grid lib/libmandelbrot.so
 
-bin/grid: build/grid.o build/mandelbrot.o 
+bin/grid: build/mandelbrot.o build/cli.o build/grid.o
 	@mkdir -p bin
 	@echo "LD $@"
 	@$(CC) $^ $(LDFLAGS) -o $@
@@ -80,6 +80,11 @@ build/mandelbrot.o: src/mandelbrot.c include/mandelbrot.h
 	@mkdir -p build
 	@echo "CC $@"
 	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -fPIC -c $< -o $@
+
+build/cli.o: src/cli.c include/mandelbrot.h include/cli.h
+	@mkdir -p build 
+	@echo "CC $@"
+	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 build/grid.o: src/main.c include/mandelbrot.h
 	@mkdir -p build
