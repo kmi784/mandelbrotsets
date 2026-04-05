@@ -14,17 +14,34 @@ LDFLAGS := -pthread
 LDLIBS := -lmandelbrot_debug
 
 
-.PHONY: clean release run
+.PHONY: clean release debug cli mandelbrot
 
 # $@ = Target of rule
 # $< = First dependency
 # $^ = all dependencies
 
-run: bin/debug
+##### DEBUGGING ########################################################################
+debug: cli
+
+# debugging cli
+cli: bin/cli_debug
+
+bin/cli_debug: build/cli_debug.o build/mandelbrot_debug.o build/debug.o 
+	@mkdir -p bin
+	@echo "LD $@"
+	@$(CC) $^ $(LDFLAGS) -o $@
+
+build/cli_debug.o: src/cli.c include/cli.h
+	@mkdir -p build
+	@echo "CC $@"
+	@$(CC) $(D_CFLAGS) -c $< -o $@
+
+# debugging mandelbrot
+mandelbrot: bin/debug_mandelbrot
 	@echo "RUN $<"
 	@LD_LIBRARY_PATH=./lib time ./$<
 
-bin/debug: build/debug.o lib/libmandelbrot_debug.so 
+bin/debug_mandelbrot: build/debug.o lib/libmandelbrot_debug.so 
 	@mkdir -p bin
 	@echo "LD $@"
 	@$(CC) $< -Llib $(LDFLAGS) $(LDLIBS) -o $@
@@ -34,33 +51,30 @@ lib/libmandelbrot_debug.so: build/mandelbrot_debug.o
 	@echo "LD $@"
 	@$(CC) -shared $< $(LDFLAGS) -o $@
 
-build/mandelbrot_debug.o: src/mandelbrot.c include/mandelbrot.h
+# rules needed by debugging mandelbrot and cli
+build/mandelbrot_debug.o: src/mandelbrot.c include/mandelbrot.h 
 	@mkdir -p build
 	@echo "CC $@"
 	@$(CC) $(D_CFLAGS) $(CPPFLAGS) -fPIC -c $< -o $@
 
-build/debug.o: src/debug.c include/mandelbrot.h
+build/debug.o: src/debug.c include/mandelbrot.h include/cli.h
 	@mkdir -p build
 	@echo "CC $@"
 	@$(CC) $(D_CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 
+##### RELEASE ##########################################################################
 release: bin/grid lib/libmandelbrot.so
 
-bin/grid: build/grid.o lib/libmandelbrot.a 
+bin/grid: build/grid.o build/mandelbrot.o 
 	@mkdir -p bin
 	@echo "LD $@"
-	@$(CC) $^ -Llib $(LDFLAGS) -o $@
+	@$(CC) $^ $(LDFLAGS) -o $@
 
 lib/libmandelbrot.so: build/mandelbrot.o 
 	@mkdir -p lib 
 	@echo "LD $@"
 	@$(CC) -shared $< $(LDFLAGS) -o $@
-
-lib/libmandelbrot.a: build/mandelbrot.o
-	@mkdir -p lib
-	@echo "AR $@"
-	@ar rcs $@ $<
 
 build/mandelbrot.o: src/mandelbrot.c include/mandelbrot.h
 	@mkdir -p build

@@ -2,12 +2,12 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from numpy import log, loadtxt
 
-key = "Sasuke"
+key = "Red"
 
 scale = (
     # "small"
-    "medium"
-    # "large"
+    # "medium"
+    "large"
 )
 
 
@@ -39,8 +39,8 @@ grid[mask_inside] = 0
 
 cmap = LinearSegmentedColormap.from_list("my_cmap", color_maps[key])
 
-plt.imshow(grid, cmap=cmap)
-plt.colorbar()
-plt.show()
+#plt.imshow(grid, cmap=cmap)
+#plt.colorbar()
+#plt.show()
 
-#plt.imsave(f"results/figures/Mandelbrot Set {key}.png", grid, cmap=cmap)
+plt.imsave(f"results/figures/Mandelbrot Set {key}.png", grid, cmap=cmap)
