@@ -10,7 +10,7 @@ int save_grid(const MandelbrotGrid* grid, FILE* file) {
 
     for(unsigned int i = 0; i < grid->height; ++i){
         for(unsigned int j = 0; j < grid->width; ++j){
-            fprintf(file, "%u\t", grid->pixels[i * grid->width +  j]);
+            fprintf(file, "%f\t", grid->pixels[i * grid->width +  j]);
         }
         fprintf(file, "\n");
     }

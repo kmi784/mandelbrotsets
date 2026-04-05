@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -5,6 +6,8 @@
 #include "../include/mandelbrot.h"
 
 /********** mandelbrot helper **********/
+
+const double LOG2 = 0.6931471805599453;
 
 /**
  * Helper object to handle complex numbers.
@@ -88,14 +91,16 @@ static void* compute_strip(void* arg) {
                 z = add(square(z), c);
 
                 if(z.real * z.real + z.imag * z.imag > 4) {
-                    strip->grid->pixels[i * strip->grid->width + j] = k;
+                    strip->grid->pixels[i * strip->grid->width + j] = (
+                        k + 2.0 - log(log(z.real * z.real + z.imag * z.imag)) / LOG2
+                    );
                     bounded = 0;
                     break;
                 }
             }
 
             if(bounded) {
-                strip->grid->pixels[i * strip->grid->width + j] = strip->iterations;
+                strip->grid->pixels[i * strip->grid->width + j] = -1.0;
             }
         }
     }
@@ -150,7 +155,7 @@ int init_grid(
     grid->imag_max = imag_max;
 
     // create pixel array
-    grid->pixels = malloc(grid->height * grid->width * sizeof(unsigned int));
+    grid->pixels = malloc(grid->height * grid->width * sizeof(double));
     if(grid->pixels == NULL) {
         fprintf(stderr, "ERROR: Malloc failed in MandelbrotGrid initiating.\n");
         return 1;

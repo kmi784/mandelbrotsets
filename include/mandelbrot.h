@@ -16,7 +16,7 @@ typedef enum {
  * Core-object storing the pixels of the grid and its domain in the complex plain.
  */
 typedef struct {
-    unsigned int* pixels;
+    double* pixels;
     unsigned int height;
     unsigned int width;
     double real_min;
