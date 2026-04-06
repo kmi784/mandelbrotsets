@@ -11,43 +11,43 @@ CPPFLAGS := -Iinclude
 LDFLAGS := -pthread -lm
 
 # libraries
-LDLIBS := -lmandelbrot_debug
+LDLIBS := -lmandelbrot
 
 
-.PHONY: clean release debug cli mandelbrot render
+.PHONY: clean release debug cli mandelbrot render tests
 
 # $@ = Target of rule
 # $< = First dependency
 # $^ = all dependencies
 
 ##### DEBUGGING ########################################################################
-debug: render
+debug: tests
 
 # debugging cli.c
-cli: bin/cli_debug
+cli: bin/debug_cli
 
-bin/cli_debug: build/cli_debug.o build/mandelbrot_debug.o build/export_debug.o build/debug.o 
+bin/debug_cli: build/debug/cli.o build/debug/mandelbrot.o build/debug/export.o build/debug/debug.o 
 	@mkdir -p bin
 	@echo "LD $@"
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-build/cli_debug.o: src/cli.c include/cli.h include/mandelbrot.h
-	@mkdir -p build
+build/debug/cli.o: src/cli.c include/cli.h include/mandelbrot.h
+	@mkdir -p build/debug
 	@echo "CC $@"
 	@$(CC) $(D_CFLAGS) -c $< -o $@
 
 # debugging mandelbrot.c
 mandelbrot: bin/debug_mandelbrot
 	@echo "RUN $<"
-	@LD_LIBRARY_PATH=./lib time ./$<
+	@LD_LIBRARY_PATH=./lib/debug time ./$<
 
-bin/debug_mandelbrot: build/debug.o build/export_debug.o lib/libmandelbrot_debug.so 
+bin/debug_mandelbrot: build/debug/export.o lib/debug/libmandelbrot.so build/debug/debug.o
 	@mkdir -p bin
 	@echo "LD $@"
-	@$(CC) $^ -Llib $(LDFLAGS) $(LDLIBS) -o $@
+	@$(CC) $^ -Llib/debug $(LDFLAGS) $(LDLIBS) -o $@
 	
-lib/libmandelbrot_debug.so: build/mandelbrot_debug.o
-	@mkdir -p lib 
+lib/debug/libmandelbrot.so: build/debug/mandelbrot.o
+	@mkdir -p lib/debug
 	@echo "LD $@"
 	@$(CC) -shared $< $(LDFLAGS) -o $@
 
@@ -56,30 +56,30 @@ render: bin/debug_render
 	@echo "RUN $<"
 	@ ./$<
 
-bin/debug_render: build/mandelbrot_debug.o build/render_debug.o build/debug.o
+bin/debug_render: build/debug/mandelbrot.o build/debug/render.o build/debug/debug.o
 	@mkdir -p bin
 	@echo "LD $@"
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-build/render_debug.o: src/render.c include/render.h include/mandelbrot.h
-	@mkdir -p build
+build/debug/render.o: src/render.c include/render.h include/mandelbrot.h
+	@mkdir -p build/debug
 	@echo "CC $@"
 	@$(CC) $(D_CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 
 # rules needed by debugging mandelbrot and cli
-build/debug.o: src/debug.c include/cli.h include/export.h include/mandelbrot.h
-	@mkdir -p build
+build/debug/debug.o: src/debug.c include/cli.h include/export.h include/mandelbrot.h
+	@mkdir -p build/debug
 	@echo "CC $@"
 	@$(CC) $(D_CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-build/export_debug.o: src/export.c include/export.h include/mandelbrot.h
-	@mkdir -p build
+build/debug/export.o: src/export.c include/export.h include/mandelbrot.h
+	@mkdir -p build/debug
 	@echo "CC $@"
 	@$(CC) $(D_CFLAGS) -c $< -o $@
 
-build/mandelbrot_debug.o: src/mandelbrot.c include/mandelbrot.h 
-	@mkdir -p build
+build/debug/mandelbrot.o: src/mandelbrot.c include/mandelbrot.h 
+	@mkdir -p build/debug
 	@echo "CC $@"
 	@$(CC) $(D_CFLAGS) $(CPPFLAGS) -fPIC -c $< -o $@
 
@@ -107,7 +107,7 @@ build/grid.o: src/main.c include/mandelbrot.h
 	@echo "CC $@"
 	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-build/export.o: 
+build/export.o: src/export.c
 	@mkdir -p build
 	@echo "CC $@"
 	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -c $< -o $@
@@ -117,6 +117,50 @@ build/mandelbrot.o: src/mandelbrot.c include/mandelbrot.h
 	@echo "CC $@"
 	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -fPIC -c $< -o $@
 
+
+##### TESTS ############################################################################
+
+
+TESTS := $(patsubst tests/test_%.c, bin/test_%, $(wildcard tests/test*.c))
+
+tests: $(TESTS)
+	@for t in $(TESTS); do $$t; done
+
+bin/test_cli: build/tests/test_cli.o build/tests/mandelbrot.o build/tests/export.o
+	@mkdir -p bin
+	@echo "LD $@"
+	@$(CC) $^ $(LDFLAGS) -o $@
+
+bin/test_export: build/tests/test_export.o 
+	@mkdir -p bin
+	@echo "LD $@"
+	@$(CC) $^ $(LDFLAGS) -o $@
+
+bin/test_mandelbrot: build/tests/test_mandelbrot.o 
+	@mkdir -p bin
+	@echo "LD $@"
+	@$(CC) $^ $(LDFLAGS) -o $@
+
+bin/test_render: build/tests/test_render.o 
+	@mkdir -p bin
+	@echo "LD $@"
+	@$(CC) $^ $(LDFLAGS) -o $@
+
+build/tests/%.o: tests/%.c
+	@mkdir -p build/tests
+	@echo "CC $@"
+	@$(CC) $(D_CFLAGS) -c $< -o $@
+
+build/tests/mandelbrot.o: src/mandelbrot.c 
+	@mkdir -p build/tests
+	@echo "CC $@"
+	@$(CC) $(D_CFLAGS) -c $< -o $@
+
+build/tests/export.o: src/export.c 
+	@mkdir -p build/tests
+	@echo "CC $@"
+	@$(CC) $(D_CFLAGS) -c $< -o $@
+
 clean:
-	@rm -rf bin build lib results/grids/debug.txt 
+	@rm -rf bin/test* bin/debug* build/tests build/debug lib/debug
 

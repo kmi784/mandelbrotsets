@@ -119,7 +119,7 @@ int init_grid(
     double real_max, 
     double imag_max
 ) {
-    // select heigth of grid
+    // select height of grid
     switch(size) {
         case GRID_DEBUG:
             grid->height = 350;
