@@ -8,7 +8,8 @@
  * Enumeration of all possible color maps.
  */
 typedef enum {
-    COLORMAP_RED
+    COLORMAP_RED,
+    COLORMAP_GRAY
 } ColorMap;
 
 /**

@@ -23,19 +23,20 @@ int main(){
 
     MandelbrotImage image;
     if(init_image(&image, grid.height, grid.width)) {return 1;}
-    if(render_mandelbrot(&image, &grid, 500, COLORMAP_RED)) {return 1;}
+    if(render_mandelbrot(&image, &grid, 500, COLORMAP_GRAY)) {return 1;}
     free_grid(&grid);
 
-    FILE* file = fopen("results/figures/debug.ppm", "w");
-    if(file == NULL) {
-        fprintf(stderr, "ERROR");
-        return 1;
-    }
-
-    save_image_ppm(&image, file);
+    save_image_png(&image, "results/figures/debug.png");
+    //FILE* file = fopen("results/figures/debug.ppm", "w");
+    //if(file == NULL) {
+    //    fprintf(stderr, "ERROR");
+    //    return 1;
+    //}
+    //save_image_ppm(&image, file);
+    //fclose(file);
 
     free_image(&image);
-    fclose(file);
+    
 
 
     return 0;

@@ -4,7 +4,6 @@
 
 /********** render helper **********/
 
-
 /**
  * Helper object to handle rgb-colors
  */
@@ -56,7 +55,7 @@ static int assign_image_pixel(
     }
     unsigned int idx = row * image->width + col;
     image->pixels[idx * 3 + 0] = (unsigned char)color.r; 
-    image->pixels[idx * 3 + 1] = (unsigned char)color.b; 
+    image->pixels[idx * 3 + 1] = (unsigned char)color.g; 
     image->pixels[idx * 3 + 2] = (unsigned char)color.b; 
     return 0;
 }
@@ -106,6 +105,39 @@ static RGB red_colormap(double t) {
     return color;
 }
 
+/**
+ * color map 
+ * v black 
+ * | white
+ * @param t 
+ *      run parameter
+ * @return `RGB` object of corresponding color 
+ */
+static RGB gray_colormap(double t) {
+    return linear_interpolation(t, RGB_BLACK, RGB_WHITE);
+}
+
+/**
+ * get rgb-color according passed `ColorMap` idendidfire 
+ * @param cmap
+ *      identifier for colormap (enums: `COLORMAP_RED`|...)
+ * @param pixel_value
+ *      numeric pixel value
+ * @param num_iterations
+ *      maximal number of iteration per pixel (normalization constant)
+ */
+static RGB colormap(ColorMap cmap, double pixel_value, unsigned int num_iterations) {
+    double t;
+    switch(cmap) {
+        case COLORMAP_RED:
+            t = fmod(pixel_value * 0.02, 1.0);
+            return red_colormap(t);
+        case COLORMAP_GRAY:
+            t = pow(pixel_value / num_iterations, 0.5);
+            return gray_colormap(t);
+    }
+}
+
 /********** render api **********/
 
 int init_image(MandelbrotImage* image, unsigned int height, unsigned int width) {
@@ -141,9 +173,11 @@ int render_mandelbrot(
             if(pixel_value < 0.0) {
                 if(assign_image_pixel(image, i, j, RGB_BLACK)) {return 1;}
             } else {
-                // double t = pow(pixel_value / num_iterations, 0.5);
-                double t = fmod(pixel_value * 0.02, 1.0);
-                if(assign_image_pixel(image, i, j, red_colormap(t))) {return 1;}
+                if(
+                    assign_image_pixel(
+                        image, i, j, colormap(cmap, pixel_value, num_iterations)
+                    )
+                ) {return 1;}
             }
         }
     }
