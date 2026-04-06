@@ -1,8 +1,8 @@
 CC := gcc
 
 # compiler flags
-D_CFLAGS := -Wall -Wextra -Wpedantic -Wsign-conversion -g -O0 -pthread 
-R_CFLAGS := -Wall -Wextra -Wpedantic -Wsign-conversion -O3 -pthread 
+D_CFLAGS := -Wall -Wextra -Wpedantic -g -O0 -pthread 
+R_CFLAGS := -Wall -Wextra -Wpedantic -O3 -pthread 
 
 # preprocessor flags (also -DMY_MACRO=...)
 CPPFLAGS := -Iinclude
@@ -26,7 +26,7 @@ debug: cli
 # debugging cli.c
 cli: bin/debug_cli
 
-bin/debug_cli: build/debug/cli.o build/debug/mandelbrot.o build/debug/export.o build/debug/debug.o 
+bin/debug_cli: build/debug/cli.o build/debug/mandelbrot.o build/debug/export.o build/debug/render.o build/debug/debug.o 
 	@mkdir -p bin
 	@echo "LD $@"
 	@$(CC) $^ $(LDFLAGS) -o $@
@@ -126,7 +126,7 @@ TESTS := $(patsubst tests/test_%.c, bin/test_%, $(wildcard tests/test*.c))
 tests: $(TESTS)
 	@for t in $(TESTS); do $$t; done
 
-bin/test_cli: build/tests/test_cli.o build/tests/mandelbrot.o build/tests/export.o
+bin/test_cli: build/tests/test_cli.o build/tests/mandelbrot.o build/tests/export.o build/tests/render.o
 	@mkdir -p bin
 	@echo "LD $@"
 	@$(CC) $^ $(LDFLAGS) -o $@

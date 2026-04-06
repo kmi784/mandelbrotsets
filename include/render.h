@@ -8,8 +8,14 @@
  * Enumeration of all possible color maps.
  */
 typedef enum {
+    COLORMAP_BLUE,
+    COLORMAP_GRAY,
+    COLORMAP_GREEN,
+    COLORMAP_PURPLE,
     COLORMAP_RED,
-    COLORMAP_GRAY
+    COLORMAP_YELLOW,
+    COLORMAP_DARKSOULS,
+    COLORMAP_SASUKE
 } ColorMap;
 
 /**

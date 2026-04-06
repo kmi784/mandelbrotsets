@@ -2,6 +2,7 @@
 #define CLI_H
 
 #include "mandelbrot.h"
+#include "render.h"
 
 /**
  * Configuration object storing parameters for mandelbrot grid computation
@@ -14,7 +15,7 @@ typedef struct {
     double imag_max;
     
     // grid
-    const char* grid_size;
+    const char* resolution;
     GridSize size;
 
     // computation
@@ -22,8 +23,14 @@ typedef struct {
     unsigned int num_iter;
     
     // output
+    const char* output;
     const char* output_path;
+    const char* format;
     char path[256];
+
+    //image
+    const char* cmap;
+    ColorMap colormap;
 
     // misc
     int assume_yes;

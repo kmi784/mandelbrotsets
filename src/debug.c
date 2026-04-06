@@ -4,40 +4,20 @@
 #include "../include/render.h"
 #include "../include/export.h"
 
-int main(){
-    MandelbrotGrid grid;
-    init_grid(&grid, GRID_DEBUG, -3.5, -1.5, 1.5, 1.5);
-    debug_print_grid(&grid);
-    compute_mandelbrot(&grid, 500, 8);
+int main(int argc, char* argv[]){
 
-    //FILE* file = fopen("results/figures/debug.ppm", "w");
-    //if(file == NULL) {
-    //    fprintf(stderr, "ERROR");
-    //    return 1;
-    //}
-    //// save_grid_txt(&grid, file);
-    //render_ppm(&grid, 500, file);
-    
-    //free_grid(&grid);
-    //fclose(file);
+    Configs configs;
+    set_defaults(&configs);
 
-    MandelbrotImage image;
-    if(init_image(&image, grid.height, grid.width)) {return 1;}
-    if(render_mandelbrot(&image, &grid, 500, COLORMAP_GRAY)) {return 1;}
-    free_grid(&grid);
+    int rc = parse_args(&configs, argc, argv);
+    if(rc == 1) {return 0;}
+    if(rc == -1) {return 1;}
 
-    save_image_png(&image, "results/figures/debug.png");
-    //FILE* file = fopen("results/figures/debug.ppm", "w");
-    //if(file == NULL) {
-    //    fprintf(stderr, "ERROR");
-    //    return 1;
-    //}
-    //save_image_ppm(&image, file);
-    //fclose(file);
+    if(!validate_configs(&configs)) {return 1;}
 
-    free_image(&image);
-    
+    if(!finalize_configs(&configs)) {return 1;}
 
+    if (!configs.assume_yes && !confirm_configs(&configs)){return 0;}
 
-    return 0;
+    return run_program(&configs);
 }
