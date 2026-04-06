@@ -10,7 +10,7 @@ static void test_save_grid_null_file(void) {
     MandelbrotGrid grid;
     assert(init_grid(&grid, GRID_DEBUG, -2.0, -1.0, 1.0, 1.0) == 0);
 
-    assert(save_grid(&grid, NULL) == 1);
+    assert(save_grid_txt(&grid, NULL) == 1);
 
     free_grid(&grid);
 }
@@ -29,7 +29,7 @@ static void test_save_grid_basic_output(void) {
     FILE* f = tmpfile();  // temporäre Datei
     assert(f != NULL);
 
-    assert(save_grid(&grid, f) == 0);
+    assert(save_grid_txt(&grid, f) == 0);
 
     rewind(f);
 
@@ -54,7 +54,7 @@ static void test_save_grid_values_correct(void) {
     FILE* f = tmpfile();
     assert(f != NULL);
 
-    assert(save_grid(&grid, f) == 0);
+    assert(save_grid_txt(&grid, f) == 0);
     rewind(f);
 
     char buffer[1024];
@@ -67,12 +67,12 @@ static void test_save_grid_values_correct(void) {
 }
 
 int main(void) {
-    printf("====== Starting tests in 'test_export.c'...\n");
+    printf(">>>>> Starting tests in 'test_export.c'...\n");
     printf("----- txt-export-tests\n");
     test_save_grid_null_file();
     test_save_grid_basic_output();
     test_save_grid_values_correct();
 
-    printf(">>>>> All tests in 'test_export.c' passed.\n");
+    printf("<<<<< All tests in 'test_export.c' passed.\n");
     return 0;
 }

@@ -2,7 +2,7 @@
 
 #include "../include/export.h"
 
-int save_grid(const MandelbrotGrid* grid, FILE* file) {
+int save_grid_txt(const MandelbrotGrid* grid, FILE* file) {
    if(file == NULL) {
         fprintf(stderr, "ERROR: Opening file failed.\n");
         return 1;
@@ -15,6 +15,17 @@ int save_grid(const MandelbrotGrid* grid, FILE* file) {
         fprintf(file, "\n");
     }
 
+    return 0;
+}
+
+int save_image_ppm(const MandelbrotImage* image, FILE* file) {
+   if(file == NULL) {
+        fprintf(stderr, "ERROR: Opening file failed.\n");
+        return 1;
+    }
+
+    fprintf(file, "P6\n%u %u\n255\n", image->width, image->height);
+    fwrite(image->pixels, sizeof(unsigned char), image->width * image->height * 3, file);
     return 0;
 }
 

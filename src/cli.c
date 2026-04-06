@@ -258,7 +258,7 @@ int run_program(const Configs* cfg) {
         fprintf(stderr, "ERROR: Computing MandelbrotGrid failed.\n");
         return 1;
     }
-    if(save_grid(&grid, file)) {
+    if(save_grid_txt(&grid, file)) {
         fclose(file);
         free_grid(&grid);
         fprintf(stderr, "ERROR: Saving MandelbrotGrid failed.\n");
