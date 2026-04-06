@@ -339,6 +339,6 @@ int main(void) {
     test_run_program_data_txt();
     test_run_program_image_ppm();
 
-    printf("<<<<<< All tests in 'test_cli.c' passed.\n");
+    printf("<<<<<< All tests in 'test_cli.c' passed.\n\n");
     return 0;
 }

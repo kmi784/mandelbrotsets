@@ -178,6 +178,6 @@ int main() {
     test_compute_strip();
     test_compare_thread_results();
 
-    printf("<<<<<< All tests in 'test_mandelbrot.c' passed.\n");
+    printf("<<<<<< All tests in 'test_mandelbrot.c' passed.\n\n");
     return 0;
 }

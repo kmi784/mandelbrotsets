@@ -22,6 +22,24 @@ static void test_free_image_set_null(void) {
     assert(image.pixels == NULL);
 }
 
+static void test_linear_interpolation() {
+    RGB c_start = {252, 103, 57};
+    RGB c_end   = {200, 136, 0};
+
+    double u = 0.5;
+
+    RGB result = linear_interpolation(u, c_start, c_end);
+
+    // Erwartete Werte (händisch gerechnet)
+    // r: 252 + 0.5*(200-252) = 226
+    // g: 103 + 0.5*(136-103) = 119.5 → 119
+    // b: 57  + 0.5*(0-57)    = 28.5 → 28
+
+    assert(result.r == 226);
+    assert(result.g == 119);
+    assert(result.b == 28);
+}
+
 static void test_render_image_different_shapes_of_image_and_grid(void) {
     MandelbrotGrid grid;
     assert(init_grid(&grid, GRID_DEBUG, -2, -1, 1, 1) == 0);
@@ -135,11 +153,12 @@ int main() {
     test_render_image_different_shapes_of_image_and_grid();
 
     printf("------ render-tests\n");
+    test_linear_interpolation();
     test_render_mandelbrot_black_for_bounded_pixel();
     test_render_mandelbrot_gray_assigns_equal_channels();
     test_render_mandelbrot_non_bounded_pixel_not_black();
     test_render_mandelbrot_gray_white_at_max_iterations();
 
-    printf("<<<<<< All tests in 'test_render.c' passed.\n");
+    printf("<<<<<< All tests in 'test_render.c' passed.\n\n");
     return 0;
 }

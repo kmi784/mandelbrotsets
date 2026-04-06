@@ -157,6 +157,6 @@ int main(void) {
     test_save_image_png_null_path();
     test_save_image_png_success();
 
-    printf("<<<<<< All tests in 'test_export.c' passed.\n");
+    printf("<<<<<< All tests in 'test_export.c' passed.\n\n");
     return 0;
 }
