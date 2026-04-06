@@ -8,11 +8,8 @@ lib/
 python/__pycache__/*
 python/mandelbrot/__pycache__/*
 
-results/figures/*
-!results/figures/.gitkeep
-results/grids/*
-!results/grids/.gitkeep
-
+results/*
+!results/.gitkeep
 
 src/debug
 src/*.txt
