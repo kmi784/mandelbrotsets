@@ -1,51 +1,55 @@
 #include <math.h>
 #include "../include/render.h"
 
+/**
+ * Helper object to handle rgb-colors
+ */
 typedef struct {
     unsigned int r;
     unsigned int g;
     unsigned int b;
 } RGB;
 
-static RGB gray_scale(double t) {
+/**
+ * interpolates linearly two colors
+ * @param u 
+ *      run parameter between `0.0` and `1,0`
+ * @param color_start 
+ *      start node interpolating range (at `u=0.0`)
+ * @param color_end
+ *      end node interpolating range (at `u=1.0`)
+ * @return `RGB` color at `u`
+ */
+static RGB linear_interpolation(double u, const RGB color_start, const RGB color_end) {
     RGB color;
-    color.r = (unsigned int)(255.0 * t);
-    color.g = (unsigned int)(255.0 * t);
-    color.b = (unsigned int)(255.0 * t);
+    color.r = (unsigned int)(color_start.r + u * (color_end.r - color_start.r));
+    color.g = (unsigned int)(color_start.g + u * (color_end.g - color_start.g));
+    color.b = (unsigned int)(color_start.b + u * (color_end.b - color_start.b));
     return color;
-}
+} 
 
-static RGB blue_red_scale(double t) {
-    RGB color;
-    color.r = (unsigned int)(255.0 * t);
-    color.g = 0;
-    color.b = (unsigned int)(255.0 * (1.0 - t));
-    return color;
-}
-
+/**
+ * color map 
+ * v #000000 (0 0 0) 
+ * | #691820 (105 24 32) 
+ * v #e62d42 (230 45 66)
+ * | #ffffff (255 255 255)
+ * @param t 
+ *      run parameter
+ * @return `RGB` color at `t` 
+ */
 static RGB red_colormap(double t) {
-    /**
-     * t0 = #000000 <-> 0 0 0
-     * t1 = #691820 <-> 105 24 32
-     * t2 = #e62d42 <-> 230 45 66
-     * t3 = #ffffff <-> 255 255 255
-     */
     RGB color;
+    RGB color0 = {0 ,0 ,0};
+    RGB color1 = {105, 24, 32};
+    RGB color2 = {230, 45, 66};
+    RGB color3 = {255, 255, 255};
     if(t < 0.4) {
-        double u = t/0.4;
-        color.r = (unsigned int)(0   + u * (105 - 0));
-        color.g = (unsigned int)(0   + u * ( 24 - 0));
-        color.b = (unsigned int)(0   + u * ( 32 - 0));
+        color = linear_interpolation(t / 0.4, color0, color1);
     } else if( 0.4 <= t && t < 0.5) {
-        double u = (t - 0.4) / 0.1;
-        color.r = (unsigned int)(105 + u * (230 - 105));
-        color.g = (unsigned int)(24 + u * (45 - 24));
-        color.b = (unsigned int)(32 + u * (66 - 32));
+        color = linear_interpolation((t - 0.4) / 0.1, color1, color2);
     } else if(0.5<= t) {
-        double u = (t - 0.5) / 0.5;
-        color.r = (unsigned int)(230 + u * (255 - 230));
-        color.g = (unsigned int)(45 + u * (255 - 45));
-        color.b = (unsigned int)(66 + u * (255 - 66));
+        color=  linear_interpolation((t - 0.5) / 0.5, color2, color3);
     }
     return color;
 }

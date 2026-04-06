@@ -6,9 +6,9 @@
 
 int main(){
     MandelbrotGrid grid;
-    init_grid(&grid, GRID_SMALL, -3.5, -1.5, 1.5, 1.5);
+    init_grid(&grid, GRID_DEBUG, -3.5, -1.5, 1.5, 1.5);
     debug_print_grid(&grid);
-    compute_mandelbrot(&grid, 1000, 8);
+    compute_mandelbrot(&grid, 500, 8);
 
     FILE* file = fopen("results/figures/debug.ppm", "w");
     if(file == NULL) {
@@ -16,7 +16,7 @@ int main(){
         return 1;
     }
     // save_grid(&grid, file);
-    render_ppm(&grid, 1000, file);
+    render_ppm(&grid, 500, file);
     
     free_grid(&grid);
     fclose(file);

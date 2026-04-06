@@ -21,7 +21,7 @@ LDLIBS := -lmandelbrot
 # $^ = all dependencies
 
 ##### DEBUGGING ########################################################################
-debug: tests
+debug: render
 
 # debugging cli.c
 cli: bin/debug_cli
