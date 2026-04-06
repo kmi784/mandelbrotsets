@@ -169,15 +169,15 @@ int main() {
     test_compute_mandelbrot_center_is_bounded();
     test_compute_mandelbrot_corners_are_unbounded();
 
-    printf("----- helper-tests\n");
+    printf("------ helper-tests\n");
     test_complex_add();
     test_complex_square();
     test_get_complex_numbers();
 
-    printf("----- threading-tests\n");
+    printf("------ threading-tests\n");
     test_compute_strip();
     test_compare_thread_results();
 
-    printf("<<<<< All tests in 'test_mandelbrot.c' passed.\n");
+    printf("<<<<<< All tests in 'test_mandelbrot.c' passed.\n");
     return 0;
 }

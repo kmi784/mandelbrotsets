@@ -170,7 +170,7 @@ int main(void) {
     test_parse_args_invalid_double();
     test_parse_args_invalid_uint();
 
-    printf("----- validation-tests\n");
+    printf("------ validation-tests\n");
     test_validate_configs_valid();
     test_validate_configs_invalid_real_range();
     test_validate_configs_invalid_imag_range();
@@ -178,11 +178,11 @@ int main(void) {
     test_validate_configs_invalid_num_threads();
     test_validate_configs_invalid_num_iter();
 
-    printf("----- finalize-tests\n");
+    printf("------ finalize-tests\n");
     test_finalize_configs_small_default_path();
     test_finalize_configs_medium_custom_path();
     test_finalize_configs_large();
 
-    printf("<<<<< All tests in 'test_cli.c' passed.\n");
+    printf("<<<<<< All tests in 'test_cli.c' passed.\n");
     return 0;
 }

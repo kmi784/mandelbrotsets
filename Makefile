@@ -21,7 +21,7 @@ LDLIBS := -lmandelbrot
 # $^ = all dependencies
 
 ##### DEBUGGING ########################################################################
-debug: tests
+debug: cli
 
 # debugging cli.c
 cli: bin/debug_cli
@@ -131,7 +131,7 @@ bin/test_cli: build/tests/test_cli.o build/tests/mandelbrot.o build/tests/export
 	@echo "LD $@"
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-bin/test_export: build/tests/test_export.o 
+bin/test_export: build/tests/test_export.o build/tests/mandelbrot.o build/tests/render.o
 	@mkdir -p bin
 	@echo "LD $@"
 	@$(CC) $^ $(LDFLAGS) -o $@
@@ -141,7 +141,7 @@ bin/test_mandelbrot: build/tests/test_mandelbrot.o
 	@echo "LD $@"
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-bin/test_render: build/tests/test_render.o build/tests/mandelbrot.o
+bin/test_render: build/tests/test_render.o build/tests/mandelbrot.o 
 	@mkdir -p bin
 	@echo "LD $@"
 	@$(CC) $^ $(LDFLAGS) -o $@
@@ -157,6 +157,11 @@ build/tests/mandelbrot.o: src/mandelbrot.c
 	@$(CC) $(D_CFLAGS) -c $< -o $@
 
 build/tests/export.o: src/export.c 
+	@mkdir -p build/tests
+	@echo "CC $@"
+	@$(CC) $(D_CFLAGS) -c $< -o $@
+
+build/tests/render.o: src/render.c 
 	@mkdir -p build/tests
 	@echo "CC $@"
 	@$(CC) $(D_CFLAGS) -c $< -o $@
