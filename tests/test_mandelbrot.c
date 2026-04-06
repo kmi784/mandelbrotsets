@@ -161,7 +161,7 @@ static void test_compare_thread_results(void) {
 }
 
 int main() {
-    printf("====== Starting tests 'test_mandelbrot.c'...\n");
+    printf(">>>>>> Starting tests 'test_mandelbrot.c'...\n");
     printf("------ api-tests\n");
     test_init_grid_shape();
     test_init_grid_invalid_size();
@@ -178,6 +178,6 @@ int main() {
     test_compute_strip();
     test_compare_thread_results();
 
-    printf(">>>>>> All tests in 'test_mandelbrot.c' passed.\n");
+    printf("<<<<< All tests in 'test_mandelbrot.c' passed.\n");
     return 0;
 }

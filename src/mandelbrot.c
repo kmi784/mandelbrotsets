@@ -7,7 +7,7 @@
 
 /********** mandelbrot helper **********/
 
-const double LOG2 = 0.6931471805599453;
+static const double LOG2 = 0.6931471805599453;
 
 /**
  * Helper object to handle complex numbers.
@@ -109,7 +109,7 @@ static void* compute_strip(void* arg) {
 }
 
 
-/********** mandelbrot framework **********/
+/********** mandelbrot api **********/
 
 int init_grid(
     MandelbrotGrid* grid, 
@@ -207,7 +207,6 @@ int compute_mandelbrot(
 
 void free_grid(MandelbrotGrid* grid) {
     if(!grid) return;
-
     free(grid->pixels);
     grid->pixels = NULL;
 }

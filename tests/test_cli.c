@@ -161,7 +161,7 @@ static void test_finalize_configs_large(void) {
 }
 
 int main(void) {
-    printf("====== Starting tests in 'test_cli.c'...\n");
+    printf(">>>>>> Starting tests in 'test_cli.c'...\n");
     printf("------ default-tests\n");
     test_set_defaults();
 
@@ -183,6 +183,6 @@ int main(void) {
     test_finalize_configs_medium_custom_path();
     test_finalize_configs_large();
 
-    printf(">>>>>> All tests in 'test_cli.c' passed.\n");
+    printf("<<<<< All tests in 'test_cli.c' passed.\n");
     return 0;
 }

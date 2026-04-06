@@ -30,8 +30,8 @@ typedef struct {
  * @param grid 
  *      pointer to `MandelbrotGrid` object
  * @param size 
- *      identifier for grid size (enums: `GRID_DEBUG`, `GRID_SMALL`, 
- *      `GRID_MEDIUM`, `GRID_LARGE`)
+ *      identifier for grid size (enums: `GRID_DEBUG`|`GRID_SMALL`| 
+ *      `GRID_MEDIUM`|`GRID_LARGE`)
  * @param real_min 
  *      smallest real part of considered complex domain 
  * @param imag_min 
