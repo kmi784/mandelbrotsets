@@ -85,8 +85,8 @@ static int parse_double(const char* s, double* out) {
 /********** cli api **********/
 
 void set_defaults(Configs* cfg) {
-    cfg->real_min = -3.5;
-    cfg->real_max = 1.5;
+    cfg->real_min = -3.4;
+    cfg->real_max = 1.4;
     cfg->imag_min = -1.5;
     cfg->imag_max = 1.5;
 
@@ -402,14 +402,14 @@ int run_program(const Configs* cfg) {
 
     rc = 0;
 
-cleanup:
-    free_grid(&grid);
-    if(is_image) {
-        free_image(&image);
-    }
-    if(file != NULL) {
-        fclose(file);
-    }
+    cleanup:
+        free_grid(&grid);
+        if(is_image) {
+            free_image(&image);
+        }
+        if(file != NULL) {
+            fclose(file);
+        }
 
     return rc;
 }

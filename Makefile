@@ -14,7 +14,7 @@ LDFLAGS := -pthread -lm
 LDLIBS := -lmandelbrot
 
 
-.PHONY: clean release debug cli mandelbrot render tests
+.PHONY: clean release debug cli mandelbrot render tests benchmark
 
 # $@ = Target of rule
 # $< = First dependency
@@ -85,17 +85,12 @@ build/debug/mandelbrot.o: src/mandelbrot.c include/mandelbrot.h
 
 
 ##### RELEASE ##########################################################################
-release: bin/grid lib/libmandelbrot.so
+release: bin/grid 
 
 bin/grid: build/cli.o build/mandelbrot.o build/export.o build/render.o build/grid.o
 	@mkdir -p bin
 	@echo "LD $@"
 	@$(CC) $^ $(LDFLAGS) -o $@
-
-lib/libmandelbrot.so: build/mandelbrot.o 
-	@mkdir -p lib 
-	@echo "LD $@"
-	@$(CC) -shared $< $(LDFLAGS) -o $@
 
 build/cli.o: src/cli.c include/cli.h include/mandelbrot.h
 	@mkdir -p build 
@@ -115,16 +110,40 @@ build/export.o: src/export.c
 build/mandelbrot.o: src/mandelbrot.c include/mandelbrot.h
 	@mkdir -p build
 	@echo "CC $@"
-	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -fPIC -c $< -o $@
+	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 build/render.o: src/render.c include/render.h
 	@mkdir -p build
 	@echo "CC $@"
 	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -c $< -o $@
 
+
+##### BENCHMARK ########################################################################
+benchmark: bin/benchmark lib/libmandelbrot.so
+
+bin/benchmark: build/mandelbrot_benchmark.o build/benchmark.o
+	@mkdir -p bin
+	@echo "LD $@"
+	@$(CC) $^ $(LDFLAGS) -o $@
+
+lib/libmandelbrot.so: build/mandelbrot_benchmark.o 
+	@mkdir -p lib 
+	@echo "LD $@"
+	@$(CC) -shared $< $(LDFLAGS) -o $@
+
+build/benchmark.o: src/benchmark.c include/mandelbrot.h
+	@mkdir -p build
+	@echo "CC $@"
+	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -c $< -o $@
+
+build/mandelbrot_benchmark.o: src/mandelbrot.c include/mandelbrot.h
+	@mkdir -p build
+	@echo "CC $@"
+	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -fPIC -c $< -o $@
+
+
+
 ##### TESTS ############################################################################
-
-
 TESTS := $(patsubst tests/test_%.c, bin/test_%, $(wildcard tests/test*.c))
 
 tests: $(TESTS)

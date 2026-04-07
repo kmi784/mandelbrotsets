@@ -9,8 +9,8 @@ static void test_set_defaults(void) {
     Configs cfg;
     set_defaults(&cfg);
 
-    assert(cfg.real_min == -3.5);
-    assert(cfg.real_max == 1.5);
+    assert(cfg.real_min == -3.4);
+    assert(cfg.real_max == 1.4);
     assert(cfg.imag_min == -1.5);
     assert(cfg.imag_max == 1.5);
 
