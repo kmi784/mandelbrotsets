@@ -125,13 +125,13 @@ int init_grid(
             grid->height = 350;
             break;
         case GRID_SMALL:
-            grid->height = 4000;
+            grid->height = 2000;
             break;
         case GRID_MEDIUM:
-            grid->height = 8000;
+            grid->height = 4000;
             break;
         case GRID_LARGE:
-            grid->height = 12000;
+            grid->height = 8000;
             break;
         default:
             fprintf(
