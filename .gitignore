@@ -5,11 +5,12 @@ bin/
 build/
 lib/
 
-python/__pycache__/*
-python/mandelbrot/__pycache__/*
+python/__pycache__
+python/mandelbrot/__pycache__
 
 results/*
 !results/.gitkeep
+!results/example.png
 
 src/debug
 src/*.txt

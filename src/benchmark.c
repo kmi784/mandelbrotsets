@@ -14,18 +14,18 @@ int main(int argc, char* argv[]){
         return rc;
     }
 
-    double real_min = -3.4;
-    double real_max = 1.4;
-    double imag_min = -1.5;
-    double imag_max = 1.5;
+    double real_min = -0.5;
+    double real_max = 0.5;
+    double imag_min = -0.5;
+    double imag_max = 0.5;
 
-    unsigned int num_iter = 500;
+    unsigned int num_iter = 2000;
     unsigned int num_threads = (unsigned int)strtoul(argv[1], NULL, 10);
 
     printf("Starting calculation with %u threads...\n", num_threads);
 
     MandelbrotGrid grid;
-    if(init_grid(&grid, GRID_MEDIUM, real_min, imag_min, real_max, imag_max)) {
+    if(init_grid(&grid, GRID_DEBUG, real_min, imag_min, real_max, imag_max)) {
         fprintf(stderr, "ERROR: Initiating MandelbrotImage failed.\n");
         goto cleanup;
     }

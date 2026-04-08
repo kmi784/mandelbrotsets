@@ -3,6 +3,7 @@ CC := gcc
 # compiler flags
 D_CFLAGS := -Wall -Wextra -Wpedantic -g -O0 -pthread 
 R_CFLAGS := -Wall -Wextra -Wpedantic -O3 -pthread 
+B_CFLAGS := -Wall -Wextra -Wpedantic -O2 -pthread 
 
 # preprocessor flags (also -DMY_MACRO=...)
 CPPFLAGS := -Iinclude
@@ -134,12 +135,12 @@ lib/libmandelbrot.so: build/mandelbrot_benchmark.o
 build/benchmark.o: src/benchmark.c include/mandelbrot.h
 	@mkdir -p build
 	@echo "CC $@"
-	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -c $< -o $@
+	@$(CC) $(B_CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 build/mandelbrot_benchmark.o: src/mandelbrot.c include/mandelbrot.h
 	@mkdir -p build
 	@echo "CC $@"
-	@$(CC) $(R_CFLAGS) $(CPPFLAGS) -fPIC -c $< -o $@
+	@$(CC) $(B_CFLAGS) $(CPPFLAGS) -fPIC -c $< -o $@
 
 
 

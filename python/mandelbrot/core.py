@@ -2,22 +2,49 @@ from enum import Enum
 from multiprocessing import Process, shared_memory
 
 import matplotlib.pyplot as plt
-from numpy import zeros, linspace, log, ndarray
+from numpy import ndarray, linspace, log, zeros
 
 LOG2 = log(2)
 
 
 class GridSize(Enum):
     debug = 350
-    small = 4000
-    medium = 8000
-    large = 12000
+    small = 2000
+    medium = 4000
+    large = 8000
 
 
 class MandelbrotSet:
     """
-    
+    Represent a discretized region of the complex plane for Mandelbrot set
+    computation and visualization.
+
+    The class builds a 2D sampling grid from the given real and imaginary
+    bounds, stores the computed escape-time values in shared memory, and
+    provides utilities to compute and display the result.
+
+    Parameters
+    ----------
+    `size` : `GridSize`
+        Preset controlling the grid height.
+    `real_min` : `float`
+        Lower bound of the real axis.
+    `imag_min` : `float`
+        Lower bound of the imaginary axis.
+    `real_max` : `float`
+        Upper bound of the real axis.
+    `imag_max` : `float`
+        Upper bound of the imaginary axis.
+
+    Notes
+    -----
+    - The grid height is determined by the selected `GridSize`.
+    - The grid width is derived from the aspect ratio of the complex-plane
+      window defined by the input bounds.
+    - Computed pixel values are stored as floating-point escape values.
+    - Points that do not escape within the iteration limit are stored as `-1`.
     """
+
     def __init__(
         self,
         size: GridSize,
@@ -40,30 +67,52 @@ class MandelbrotSet:
         self._grid[:] = 0
 
     def cleanup(self) -> None:
+        """
+        Release the shared-memory resources used by the Mandelbrot grid.
+
+        This closes the local shared-memory handle and unlinks the underlying
+        shared-memory block. It should be called once the grid is no longer needed.
+        """
         self._shm.close()
         self._shm.unlink()
 
     def compute_with_py(self, num_iter: int, num_processes: int = 1) -> None:
         """
-        computes multi-processed numeric pixel values 
+        Compute Mandelbrot escape values using Python multiprocessing.
+
+        The grid is divided into horizontal strips, and each strip is processed
+        by a separate worker process writing into the shared-memory array.
 
         Parameters
         ----------
-        `num_iter`: `int`
-            maximal number of iteration per pixel
-        `num_processes`: `int`
-            number of processes 
+        `num_iter` : `int`
+            Maximum number of iterations used to test whether a point escapes.
+        `num_processes` : `int`, `default=1`
+            Number of worker processes.
+
+        Notes
+        -----
+        Each pixel stores a smoothed escape-time value. Points that do not escape
+        within `num_iter` iterations are marked with `-1`.
         """
         chunk = (self._shape[0] + num_processes - 1) // num_processes
         processes: list[Process] = []
         for p in range(num_processes):
-            row_start = p * chunk 
+            row_start = p * chunk
             row_end = min((p + 1) * chunk, self._shape[0])
             if row_start < row_end:
                 processes.append(
                     Process(
-                        target=self._compute_strip,
-                        args=(self._shm.name, num_iter, row_start, row_end),
+                        target=MandelbrotSet._compute_strip,
+                        args=(
+                            self._shm.name,
+                            self._shape,
+                            self._real_range,
+                            self._imag_range,
+                            num_iter,
+                            row_start,
+                            row_end,
+                        ),
                     )
                 )
 
@@ -73,31 +122,77 @@ class MandelbrotSet:
         for process in processes:
             process.join()
 
-
     def compute_with_c(self, num_iter: int, num_threads: int):
-        pass
+        """
+        Compute Mandelbrot escape values using the C backend.
+
+        Parameters
+        ----------
+        `num_iter` : `int`
+            Maximum number of iterations used to test whether a point escapes.
+        `num_threads` : `int`
+            Number of native threads used by the C implementation.
+
+        Notes
+        -----
+        This method is currently not implemented.
+        """
+        raise NotImplementedError
 
     def draw(self):
-        """visualizes Mandelbrotsets with 'inferno' color map"""
+        """
+        Display the computed Mandelbrot grid as an image.
+
+        The numeric grid is rendered with Matplotlib using the `"inferno"`
+        colormap and with axes hidden.
+        """
         plt.imshow(self._grid, cmap="inferno")
         plt.axis("off")
         plt.show()
 
-    def _compute_strip(self, name: str, num_iter: int, row_start: int, row_end: int):
-        """helper to compute numeric pixel values of a strip of 'self._grid'"""
+    @staticmethod
+    def _compute_strip(
+        name: str,
+        shape: tuple[int, int],
+        real_range: ndarray,
+        imag_range: ndarray,
+        num_iter: int,
+        row_start: int,
+        row_end: int,
+    ):
+        """
+        Compute Mandelbrot escape values for a contiguous strip of rows.
+
+        This worker method attaches to an existing shared-memory block and fills
+        the rows in the half-open interval `[row_start, row_end)`.
+
+        Parameters
+        ----------
+        `name` : `str`
+            Name of the shared-memory block containing the output grid.
+        `num_iter` : `int`
+            Maximum number of iterations used to test whether a point escapes.
+        `row_start` : `int`
+            First row index to compute (inclusive).
+        `row_end` : `int`
+            Last row index to compute (exclusive).
+
+        Notes
+        -----
+        Escaping points receive a smoothed escape-time value based on the final
+        magnitude of `z`. Points that do not escape are assigned `-1`.
+        """
         shm = shared_memory.SharedMemory(name=name)
-        grid = ndarray(shape=self._shape, dtype=float, buffer=shm.buf)
+        grid = ndarray(shape=shape, dtype=float, buffer=shm.buf)
 
         for i in range(row_start, row_end):
-            for j in range(self._shape[1]):
+            for j in range(shape[1]):
                 z = 0j
-                c = self._real_range[j] + 1j * self._imag_range[i]
+                c = real_range[j] + 1j * imag_range[i]
                 for k in range(num_iter):
                     z = z * z + c
                     if z.real**2 + z.imag**2 > 4:
-                        grid[i, j] = (
-                            k + 2.0 - log(log(z.real**2 + z.imag**2)) / LOG2
-                        )
+                        grid[i, j] = k + 2.0 - log(log(z.real**2 + z.imag**2)) / LOG2
                         break
                 else:
                     grid[i, j] = -1

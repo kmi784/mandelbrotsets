@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+if __name__ == "__main__":
+    import sys
+    from mandelbrot import GridSize, MandelbrotSet
+
+    if len(sys.argv) != 2:
+        raise ValueError(
+            f"You have to pass exactly 1 argument (number of threads) to '{sys.argv[0]}'"
+        )
+
+    num_processes = int(sys.argv[1])
+
+    print(f"Starting calculation with {num_processes} processes...")
+
+    obj = MandelbrotSet(
+        GridSize.debug, real_min=-0.5, imag_min=-0.5, real_max=0.5, imag_max=0.5
+    )
+    obj.compute_with_py(2000, num_processes)
+
+    print("Finished calculation.")
+
+    obj.cleanup()
