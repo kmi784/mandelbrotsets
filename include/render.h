@@ -9,13 +9,15 @@
  */
 typedef enum {
     COLORMAP_BLUE,
+    COLORMAP_DARKSOULS,
     COLORMAP_GRAY,
     COLORMAP_GREEN,
+    COLORMAP_INFERNO,
     COLORMAP_PURPLE,
     COLORMAP_RED,
-    COLORMAP_YELLOW,
-    COLORMAP_DARKSOULS,
-    COLORMAP_SASUKE
+    COLORMAP_SASUKE,
+    COLORMAP_YELLOW
+
 } ColorMap;
 
 /**
@@ -57,7 +59,6 @@ int init_image(MandelbrotImage*, unsigned int height, unsigned int width);
 int render_mandelbrot(
     MandelbrotImage* image, 
     const MandelbrotGrid* grid, 
-    unsigned int num_iterations, 
     ColorMap cmap
 );
 

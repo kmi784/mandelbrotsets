@@ -37,7 +37,7 @@ static void print_help(const char* program_name, const Configs* cfg) {
     printf("  %-35s default: %u\n\n", "", cfg->num_iter);
     printf("  %-35s %s\n", "-f, --format {png|ppm}", "Output image format");
     printf("  %-35s default: %s\n\n", "", cfg->format);
-    printf("  %-35s %s\n", "-c, --cmap {blue|gray|green|purple|red|yellow|darksouls|sasuke}", "Color theme");
+    printf("  %-35s %s\n", "-c, --cmap {blue|darksouls|gray|green|inferno|purple|red|sasuke|yellow}", "Color theme");
     printf("  %-35s default: %s\n\n", "", cfg->cmap);
     printf("  %-35s %s\n", "-o, --output_path <string>","Output path (./mandelbrot_[resolution].[ppm|png|txt])");
     printf("  %-35s %s\n", "-y, --yes", "Skip confirmation prompt");
@@ -253,13 +253,15 @@ int validate_configs(const Configs* cfg) {
     }
     if(
         strcmp(cfg->cmap, "blue") != 0 &&
+        strcmp(cfg->cmap, "darksouls") != 0 &&
         strcmp(cfg->cmap, "gray") != 0 &&
         strcmp(cfg->cmap, "green") != 0 &&
+        strcmp(cfg->cmap, "inferno") != 0 &&
         strcmp(cfg->cmap, "purple") != 0 &&
         strcmp(cfg->cmap, "red") != 0 &&
-        strcmp(cfg->cmap, "yellow") != 0 &&
-        strcmp(cfg->cmap, "darksouls") != 0 &&
-        strcmp(cfg->cmap, "sasuke") != 0
+        strcmp(cfg->cmap, "sasuke") != 0 &&
+        strcmp(cfg->cmap, "yellow") != 0 
+
     ) {
         fprintf(stderr, "ERROR: invalid '--cmap': '%s'.\n", cfg->cmap);
         return 0;
@@ -295,12 +297,13 @@ int finalize_configs(Configs* cfg) {
 
     // cmap
     if(strcmp(cfg->cmap, "blue") == 0) {cfg->colormap = COLORMAP_BLUE;}
+    else if(strcmp(cfg->cmap, "darksouls") == 0) {cfg->colormap = COLORMAP_DARKSOULS;}
     else if(strcmp(cfg->cmap, "gray") == 0) {cfg->colormap = COLORMAP_GRAY;}
     else if(strcmp(cfg->cmap, "green") == 0) {cfg->colormap = COLORMAP_GREEN;}
+    else if(strcmp(cfg->cmap, "inferno") == 0) {cfg->colormap = COLORMAP_INFERNO;}
     else if(strcmp(cfg->cmap, "purple") == 0) {cfg->colormap = COLORMAP_PURPLE;}
-    else if(strcmp(cfg->cmap, "yellow") == 0) {cfg->colormap = COLORMAP_YELLOW;}
-    else if(strcmp(cfg->cmap, "darksouls") == 0) {cfg->colormap = COLORMAP_DARKSOULS;}
     else if(strcmp(cfg->cmap, "sasuke") == 0) {cfg->colormap = COLORMAP_SASUKE;}
+    else if(strcmp(cfg->cmap, "yellow") == 0) {cfg->colormap = COLORMAP_YELLOW;}
     else {cfg->colormap = COLORMAP_RED;}
 
     return 1;
@@ -371,7 +374,7 @@ int run_program(const Configs* cfg) {
             goto cleanup;
         }
 
-        if(render_mandelbrot(&image, &grid, cfg->num_iter, cfg->colormap)) {
+        if(render_mandelbrot(&image, &grid, cfg->colormap)) {
             fprintf(stderr, "ERROR: Rendering MandelbrotImage failed.\n");
             goto cleanup;
         }
