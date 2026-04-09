@@ -313,8 +313,6 @@ static RGB yellow_colormap(double t) {
  *      identifier for colormap (enums: `COLORMAP_RED`|...)
  * @param pixel_value
  *      numeric pixel value
- * @param num_iterations
- *      maximal number of iteration per pixel (normalization constant)
  */
 static RGB colormap(ColorMap cmap, double pixel_value) {
     double t;

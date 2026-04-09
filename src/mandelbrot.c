@@ -80,30 +80,31 @@ typedef struct {
  */
 static void* compute_strip(void* arg) {
     MandelbrotGridStrip* strip = (MandelbrotGridStrip*) arg;
+    compute_rows(strip->grid, strip->iterations, strip->row_start, strip->row_end);
 
-    for(unsigned int i = strip->row_start; i < strip->row_end; ++i) {
-        for(unsigned int j = 0; j < strip->grid->width; ++j) {
-            int bounded = 1;
-            Complex z = {0.0, 0.0};
-            Complex c = get_complex_number(strip->grid, i, j);
+    //for(unsigned int i = strip->row_start; i < strip->row_end; ++i) {
+    //    for(unsigned int j = 0; j < strip->grid->width; ++j) {
+    //        int bounded = 1;
+    //        Complex z = {0.0, 0.0};
+    //        Complex c = get_complex_number(strip->grid, i, j);
 
-            for(unsigned int k = 0; k < strip->iterations; ++k) {
-                z = add(square(z), c);
+    //        for(unsigned int k = 0; k < strip->iterations; ++k) {
+    //            z = add(square(z), c);
 
-                if(z.real * z.real + z.imag * z.imag > 4) {
-                    strip->grid->pixels[i * strip->grid->width + j] = (
-                        k + 2.0 - log(log(z.real * z.real + z.imag * z.imag)) / LOG2
-                    );
-                    bounded = 0;
-                    break;
-                }
-            }
+    //            if(z.real * z.real + z.imag * z.imag > 4) {
+    //                strip->grid->pixels[i * strip->grid->width + j] = (
+    //                    k + 2.0 - log(log(z.real * z.real + z.imag * z.imag)) / LOG2
+    //                );
+    //                bounded = 0;
+    //                break;
+    //            }
+    //        }
 
-            if(bounded) {
-                strip->grid->pixels[i * strip->grid->width + j] = -1.0;
-            }
-        }
-    }
+    //        if(bounded) {
+    //            strip->grid->pixels[i * strip->grid->width + j] = -1.0;
+    //        }
+    //    }
+    //}
 
     return NULL;
 }
@@ -203,6 +204,37 @@ int compute_mandelbrot(
     free(strips);
 
     return 0;
+}
+
+void compute_rows(
+    MandelbrotGrid* grid, 
+    unsigned int num_iter, 
+    unsigned int row_start, 
+    unsigned int row_end
+) {
+    for(unsigned int i = row_start; i < row_end; ++i) {
+        for(unsigned int j = 0; j < grid->width; ++j) {
+            int bounded = 1;
+            Complex z = {0.0, 0.0};
+            Complex c = get_complex_number(grid, i, j);
+
+            for(unsigned int k = 0; k < num_iter; ++k) {
+                z = add(square(z), c);
+
+                if(z.real * z.real + z.imag * z.imag > 4) {
+                    grid->pixels[i * grid->width + j] = (
+                        k + 2.0 - log(log(z.real * z.real + z.imag * z.imag)) / LOG2
+                    );
+                    bounded = 0;
+                    break;
+                }
+            }
+
+            if(bounded) {
+                grid->pixels[i * grid->width + j] = -1.0;
+            }
+        }
+    }
 }
 
 void free_grid(MandelbrotGrid* grid) {

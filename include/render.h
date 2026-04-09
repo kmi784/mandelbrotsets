@@ -50,8 +50,6 @@ int init_image(MandelbrotImage*, unsigned int height, unsigned int width);
  *      pointer to `MandelbrotImage` object
  * @param grid 
  *      pointer to `MandelbrotGrid` object
- * @param num_iterations
- *      maximal number of iteration per pixel (normalization constant)
  * @param cmap 
  *      identifier for colormap (enums: `COLORMAP_RED`|...)
  * @return `0` on success, `1` on failure

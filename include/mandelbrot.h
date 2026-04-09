@@ -74,6 +74,19 @@ int compute_mandelbrot(
 );
 
 /**
+ * assign pixels with values between rows 
+ * @param grid 
+ *      pointer to `MandelbrotGrid` object
+ * @param num_iterations
+ *      maximal number of iteration per pixel
+ * @param row_start
+ *      start row index
+ * @param row_end
+ *      end row index
+ */
+void compute_rows(MandelbrotGrid* grid, unsigned int num_iter, unsigned int row_start, unsigned int row_end);
+
+/**
  * frees `MandelbrotGrid`-object.
  * @param grid 
  *      pointer to `MandelbrotGrid` object

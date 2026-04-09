@@ -4,6 +4,8 @@ from multiprocessing import Process, shared_memory
 import matplotlib.pyplot as plt
 from numpy import ndarray, linspace, log, zeros
 
+from ctypes_api import CGridSize, ccompute_strip
+
 LOG2 = log(2)
 
 
@@ -12,6 +14,13 @@ class GridSize(Enum):
     small = 2000
     medium = 4000
     large = 8000
+
+CMAP = {
+    GridSize.debug: CGridSize.debug, 
+    GridSize.small: CGridSize.small, 
+    GridSize.medium: CGridSize.medium, 
+    GridSize.large: CGridSize.large, 
+}
 
 
 class MandelbrotSet:
@@ -65,6 +74,8 @@ class MandelbrotSet:
         )
         self._grid = ndarray(shape=self._shape, dtype=float, buffer=self._shm.buf)
         self._grid[:] = 0
+
+        self._csize = CMAP[size]
 
     def cleanup(self) -> None:
         """
@@ -122,7 +133,7 @@ class MandelbrotSet:
         for process in processes:
             process.join()
 
-    def compute_with_c(self, num_iter: int, num_threads: int):
+    def compute_with_c(self, num_iter: int, num_processes: int):
         """
         Compute Mandelbrot escape values using the C backend.
 
@@ -132,12 +143,18 @@ class MandelbrotSet:
             Maximum number of iterations used to test whether a point escapes.
         `num_threads` : `int`
             Number of native threads used by the C implementation.
-
-        Notes
-        -----
-        This method is currently not implemented.
         """
-        raise NotImplementedError
+        self._grid = ccompute_strip(
+            self._csize,
+            self._real_range[0],
+            self._imag_range[0],
+            self._real_range[-1],
+            self._imag_range[-1],
+            num_iter,
+            0,
+            self._shape[0] 
+        )
+        
 
     def draw(self):
         """
@@ -202,6 +219,7 @@ class MandelbrotSet:
 if __name__ == "__main__":
 
     obj = MandelbrotSet(GridSize.small, -3.4, -1.5, 1.4, 1.5)
-    obj.compute_with_py(num_iter=100, num_processes=8)
+    obj.compute_with_c(num_iter=100, num_processes=8)
+    #obj.compute_with_py(num_iter=100, num_processes=8)
     obj.draw()
     obj.cleanup()
