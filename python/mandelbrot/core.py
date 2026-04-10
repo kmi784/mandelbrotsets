@@ -1,10 +1,10 @@
 from enum import Enum
-from multiprocessing import Process, shared_memory
+from multiprocessing import Process, shared_memory, Pool
 
 import matplotlib.pyplot as plt
 from numpy import ndarray, linspace, log, zeros
 
-from ctypes_api import CGridSize, ccompute_strip
+from .ctypes_api import CGridSize, ccompute_strip
 
 LOG2 = log(2)
 
@@ -15,11 +15,12 @@ class GridSize(Enum):
     medium = 4000
     large = 8000
 
+
 CMAP = {
-    GridSize.debug: CGridSize.debug, 
-    GridSize.small: CGridSize.small, 
-    GridSize.medium: CGridSize.medium, 
-    GridSize.large: CGridSize.large, 
+    GridSize.debug: CGridSize.debug,
+    GridSize.small: CGridSize.small,
+    GridSize.medium: CGridSize.medium,
+    GridSize.large: CGridSize.large,
 }
 
 
@@ -144,17 +145,32 @@ class MandelbrotSet:
         `num_threads` : `int`
             Number of native threads used by the C implementation.
         """
-        self._grid = ccompute_strip(
-            self._csize,
-            self._real_range[0],
-            self._imag_range[0],
-            self._real_range[-1],
-            self._imag_range[-1],
-            num_iter,
-            0,
-            self._shape[0] 
-        )
-        
+        chunk = (self._shape[0] + num_processes - 1) // num_processes
+        args = []
+        for p in range(num_processes):
+            row_start = p * chunk
+            row_end = min((p + 1) * chunk, self._shape[0])
+            if row_start < row_end:
+                args.append(
+                    (
+                        self._csize,
+                        self._real_range[0],
+                        self._imag_range[0],
+                        self._real_range[-1],
+                        self._imag_range[-1],
+                        num_iter,
+                        row_start,
+                        row_end
+                    )
+                )
+
+        # since worker returning strip there is no shared memory routine needed
+        with Pool(num_processes) as pool:
+            # starting and joining process using 'starmap' instead of 'map', 
+            # because worker has more then one parameter 
+            for row_start, row_end, strip in pool.starmap(ccompute_strip, args):
+                self._grid[row_start: row_end] = strip
+
 
     def draw(self):
         """
@@ -218,8 +234,8 @@ class MandelbrotSet:
 
 if __name__ == "__main__":
 
-    obj = MandelbrotSet(GridSize.small, -3.4, -1.5, 1.4, 1.5)
-    obj.compute_with_c(num_iter=100, num_processes=8)
-    #obj.compute_with_py(num_iter=100, num_processes=8)
+    obj = MandelbrotSet(GridSize.large, -3.4, -1.5, 1.4, 1.5)
+    obj.compute_with_c(num_iter=200, num_processes=8)
+    # obj.compute_with_py(num_iter=100, num_processes=8)
     obj.draw()
     obj.cleanup()

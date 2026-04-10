@@ -25,6 +25,10 @@ def run_c(num_threads):
 def run_py(num_processes):
     return run(["./py_benchmark.py", f"{num_processes}"], check=True, stdout=DEVNULL)
 
+@benchmark
+def run_cpy(num_processes):
+    return run(["./cpy_benchmark.py", f"{num_processes}"], check=True, stdout=DEVNULL)
+
 
 
 
