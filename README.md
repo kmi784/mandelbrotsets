@@ -7,7 +7,7 @@ This project has two main goals:
 2) Compare the performance of numeric pixel computation using:
    - C (`pthreads`)
    - Python (`multiprocessing`)
-   - a hybrid approach (`multiprocessing` + `ctypes`)
+   - a hybrid approach (`ctypes`)
 
 # Quick start
 ~~~sh

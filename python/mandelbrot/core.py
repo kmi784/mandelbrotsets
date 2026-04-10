@@ -1,10 +1,10 @@
 from enum import Enum
-from multiprocessing import Process, shared_memory, Pool
+from multiprocessing import Process, shared_memory
 
 import matplotlib.pyplot as plt
 from numpy import ndarray, linspace, log, zeros
 
-from .ctypes_api import CGridSize, ccompute_strip
+from mandelbrot.ctypes_api import CGridSize, compute_mandelbrot
 
 LOG2 = log(2)
 
@@ -134,7 +134,7 @@ class MandelbrotSet:
         for process in processes:
             process.join()
 
-    def compute_with_c(self, num_iter: int, num_processes: int):
+    def compute_with_c(self, num_iter: int, num_threads: int):
         """
         Compute Mandelbrot escape values using the C backend.
 
@@ -145,31 +145,15 @@ class MandelbrotSet:
         `num_threads` : `int`
             Number of native threads used by the C implementation.
         """
-        chunk = (self._shape[0] + num_processes - 1) // num_processes
-        args = []
-        for p in range(num_processes):
-            row_start = p * chunk
-            row_end = min((p + 1) * chunk, self._shape[0])
-            if row_start < row_end:
-                args.append(
-                    (
-                        self._csize,
-                        self._real_range[0],
-                        self._imag_range[0],
-                        self._real_range[-1],
-                        self._imag_range[-1],
-                        num_iter,
-                        row_start,
-                        row_end
-                    )
-                )
-
-        # since worker returning strip there is no shared memory routine needed
-        with Pool(num_processes) as pool:
-            # starting and joining process using 'starmap' instead of 'map', 
-            # because worker has more then one parameter 
-            for row_start, row_end, strip in pool.starmap(ccompute_strip, args):
-                self._grid[row_start: row_end] = strip
+        self._grid = compute_mandelbrot(
+            self._csize,
+            self._real_range[0],
+            self._imag_range[0],
+            self._real_range[-1],
+            self._imag_range[-1],
+            num_iter,
+            num_threads
+        )
 
 
     def draw(self):
@@ -231,11 +215,3 @@ class MandelbrotSet:
                     grid[i, j] = -1
         shm.close()
 
-
-if __name__ == "__main__":
-
-    obj = MandelbrotSet(GridSize.large, -3.4, -1.5, 1.4, 1.5)
-    obj.compute_with_c(num_iter=200, num_processes=8)
-    # obj.compute_with_py(num_iter=100, num_processes=8)
-    obj.draw()
-    obj.cleanup()
