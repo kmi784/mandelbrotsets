@@ -11,6 +11,8 @@ python/mandelbrot/__pycache__
 results/*
 !results/.gitkeep
 !results/example.png
+!results/multiprocessesing.svg
+!results/threading.svg
 
 src/debug
 src/*.txt
