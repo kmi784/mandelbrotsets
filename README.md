@@ -1,4 +1,4 @@
-# Overview
+## Overview
 This project has two main goals:
 1) Provide a CLI application for generating Mandelbrotset wallpapers, like
     <p align="center">
@@ -9,7 +9,7 @@ This project has two main goals:
    - Python (`multiprocessing`)
    - a hybrid approach (`ctypes`)
 
-# Quick start
+## Quick start
 ~~~sh
 git clone https://github.com/kmi784/mandelbrotsets.git
 cd mandelbrotsets
@@ -18,7 +18,7 @@ bin/mandelbrot --output image
 ~~~
 
 
-# Features
+## Features
 - Mandelbrotset computation 
 - RGB rendering with different colormaps
 - Multithreading in C (`pthreads`)
@@ -84,7 +84,7 @@ bin/mandelbrot --help
 Make sure you have 
 - installed the python requirements `pip install -r python/requirements.txt`
 - compiled the benchmark binaries and shred-lin `make benchmark`
-Then you can run the [notebook](python/benchmarks.ipynb).
+Then you can run the [notebook](python/paralellization.ipynb).
 
 ## Project structure
 
@@ -105,7 +105,7 @@ mandelbrotsets/
 │   │   │── __init__.py 
 │   │   │── core.py # image rendering + backend
 │   │   ╰── ctypes_api.py # helper for (c + python)
-│   │── benchmarks.ipynb # running/visualize benchmarks
+│   │── paralellization.ipynb # running/visualize benchmarks
 │   │── cpy_benchmark.py # entrypoint benchmark (c + python)
 │   │── py_benchmark.py # entrypoint benchmark (python)
 │   │── requirements.txt # dependencies (python)
