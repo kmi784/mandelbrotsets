@@ -29,6 +29,7 @@ bin/mandelbrot --output image
 
 ## Build
 > **Dependencies:**
+> - Linux
 > - Python >=3.10
 > - (GCC) >= 10
 > - GNU Make >= 4
