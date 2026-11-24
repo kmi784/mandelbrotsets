@@ -1,5 +1,6 @@
 import time
-from subprocess import run, DEVNULL
+from subprocess import DEVNULL, run
+
 
 def benchmark(func):
     def wrapper(num_threads, warm_up, repeat):
@@ -14,22 +15,20 @@ def benchmark(func):
             dt.append(t_end - t_start)
 
         return dt
-    
+
     return wrapper
+
 
 @benchmark
 def run_c(num_threads):
     return run(["../bin/benchmark", f"{num_threads}"], check=True, stdout=DEVNULL)
 
+
 @benchmark
 def run_py(num_processes):
     return run(["./py_benchmark.py", f"{num_processes}"], check=True, stdout=DEVNULL)
 
+
 @benchmark
 def run_cpy(num_processes):
     return run(["./cpy_benchmark.py", f"{num_processes}"], check=True, stdout=DEVNULL)
-
-
-
-
-

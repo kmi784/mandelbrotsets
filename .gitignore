@@ -18,4 +18,6 @@ src/debug
 src/*.txt
 src/*.c.swp
 
+AGENTS.md
+pyrightconfig.json
 tmp.py

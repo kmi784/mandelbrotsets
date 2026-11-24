@@ -2,6 +2,7 @@
 
 if __name__ == "__main__":
     import sys
+
     from mandelbrot import GridSize, MandelbrotSet
 
     if len(sys.argv) != 2:

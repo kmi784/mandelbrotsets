@@ -1,4 +1,4 @@
-from ctypes import CDLL, c_double, c_int, c_uint, Structure, byref, POINTER
+from ctypes import CDLL, POINTER, Structure, byref, c_double, c_int, c_uint
 from enum import Enum
 from pathlib import Path
 
@@ -127,9 +127,11 @@ def compute_mandelbrot(
         raise RuntimeError("running 'compute_mandelbrot()' failed")
 
     # copy array before free memory (malloc)
-    out = as_array(grid.pixels, shape=(grid.height * grid.width,)).reshape(
-        (grid.height, grid.width)
-    ).copy()
+    out = (
+        as_array(grid.pixels, shape=(grid.height * grid.width,))
+        .reshape((grid.height, grid.width))
+        .copy()
+    )
 
     LIB.free_grid(byref(grid))
     return out

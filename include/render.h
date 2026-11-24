@@ -1,22 +1,22 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include <stdio.h>
 #include "mandelbrot.h"
+#include <stdio.h>
 
 /**
  * Enumeration of all possible color maps.
  */
 typedef enum {
-    COLORMAP_BLUE,
-    COLORMAP_DARKSOULS,
-    COLORMAP_GRAY,
-    COLORMAP_GREEN,
-    COLORMAP_INFERNO,
-    COLORMAP_PURPLE,
-    COLORMAP_RED,
-    COLORMAP_SASUKE,
-    COLORMAP_YELLOW
+  COLORMAP_BLUE,
+  COLORMAP_DARKSOULS,
+  COLORMAP_GRAY,
+  COLORMAP_GREEN,
+  COLORMAP_INFERNO,
+  COLORMAP_PURPLE,
+  COLORMAP_RED,
+  COLORMAP_SASUKE,
+  COLORMAP_YELLOW
 
 } ColorMap;
 
@@ -24,47 +24,43 @@ typedef enum {
  * Image object storing pixel colors and meta data of the image.
  */
 typedef struct {
-    unsigned int height;
-    unsigned int width;
-    unsigned char* pixels;
+  unsigned int height;
+  unsigned int width;
+  unsigned char *pixels;
 } MandelbrotImage;
-
 
 /**
  * initiates `MandelbrotImage` object.
- * @param image 
+ * @param image
  *      pointer to `MandelbrotImage` object
  * @param height
  *      height of image
- * @param width 
+ * @param width
  *      width of image
  * @return `0` on success, `1` on failure
  */
-int init_image(MandelbrotImage*, unsigned int height, unsigned int width);
+int init_image(MandelbrotImage *, unsigned int height, unsigned int width);
 
 /**
  * renders image data an stores them in `MandelbrotImage` object.
  * @note after calling this function free `MandelbrotGrid` object to
  * avoid huge memory impacts with `free_grid(MandelbrotGrid*)`
- * @param image 
+ * @param image
  *      pointer to `MandelbrotImage` object
- * @param grid 
+ * @param grid
  *      pointer to `MandelbrotGrid` object
- * @param cmap 
+ * @param cmap
  *      identifier for colormap (enums: `COLORMAP_RED`|...)
  * @return `0` on success, `1` on failure
  */
-int render_mandelbrot(
-    MandelbrotImage* image, 
-    const MandelbrotGrid* grid, 
-    ColorMap cmap
-);
+int render_mandelbrot(MandelbrotImage *image, const MandelbrotGrid *grid,
+                      ColorMap cmap);
 
 /**
  * frees `MandelbrotGrid`-object.
- * @param grid 
+ * @param grid
  *      pointer to `MandelbrotGrid` object
  */
-void free_image(MandelbrotImage* image);
+void free_image(MandelbrotImage *image);
 
-#endif 
+#endif

@@ -2,7 +2,7 @@ from enum import Enum
 from multiprocessing import Process, shared_memory
 
 import matplotlib.pyplot as plt
-from numpy import ndarray, linspace, log, zeros
+from numpy import linspace, log, ndarray, zeros
 
 from mandelbrot.ctypes_api import CGridSize, compute_mandelbrot
 
@@ -152,9 +152,8 @@ class MandelbrotSet:
             self._real_range[-1],
             self._imag_range[-1],
             num_iter,
-            num_threads
+            num_threads,
         )
-
 
     def draw(self):
         """
@@ -214,4 +213,3 @@ class MandelbrotSet:
                 else:
                     grid[i, j] = -1
         shm.close()
-
